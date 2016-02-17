@@ -1,0 +1,15 @@
+{
+  "name": "frida-uikit",
+  "version": "1.0.0",
+  "description": "Inspect and manipulate UIKit-based GUIs through Frida",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viaforensics/frida-uikit.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/viaforensics/frida-uikit/issues"
+  },
+  "homepage": "https://github.com/viaforensics/frida-uikit#readme"
+}
