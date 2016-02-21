@@ -5,11 +5,11 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viaforensics/frida-uikit.git"
+    "url": "git+https://github.com/nowsecure/frida-uikit.git"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viaforensics/frida-uikit/issues"
+    "url": "https://github.com/nowsecure/frida-uikit/issues"
   },
-  "homepage": "https://github.com/viaforensics/frida-uikit#readme"
+  "homepage": "https://github.com/nosecure/frida-uikit#readme"
 }
