@@ -3,6 +3,18 @@
   "version": "2.0.0",
   "description": "Inspect and manipulate UIKit-based GUIs through Frida",
   "main": "index.js",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nowsecure/frida-uikit.git"
