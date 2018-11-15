@@ -3,6 +3,10 @@
   "version": "2.0.8",
   "description": "Inspect and manipulate UIKit-based GUIs through Frida",
   "main": "index.js",
+  "files": [
+    "/index.js",
+    "/lib/**/*.js"
+  ],
   "browserify": {
     "transform": [
       [
