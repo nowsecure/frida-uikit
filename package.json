@@ -1,6 +1,6 @@
 {
   "name": "frida-uikit",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "description": "Inspect and manipulate UIKit-based GUIs through Frida",
   "main": "index.js",
   "files": [
