@@ -1,5 +1,3 @@
-'use strict';
-
 const UINode = require('./lib/node');
 
 const UIWindow = ObjC.classes.UIWindow;
