@@ -1,6 +1,6 @@
 # frida-uikit
 
-Inspect and manipulate UIKit-based GUIs through [Frida](http://frida.re).
+Inspect and manipulate UIKit-based GUIs through [Frida](https://www.frida.re).
 
 ## Example
 
