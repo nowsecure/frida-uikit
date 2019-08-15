@@ -7,6 +7,6 @@ Inspect and manipulate UIKit-based GUIs through [Frida](http://frida.re).
 ```js
 const ui = require('frida-uikit');
 
-const username = yield ui.get(node => node.type === 'UITextField');
+const username = await ui.get(node => node.type === 'UITextField');
 username.setText('john.doe');
 ```
