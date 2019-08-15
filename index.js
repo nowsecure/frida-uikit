@@ -3,10 +3,10 @@ const UINode = require('./lib/node');
 const UIWindow = ObjC.classes.UIWindow;
 
 function get(predicate) {
-  return new Promise(function (resolve, reject) {
+  return new Promise((resolve, reject) => {
     let tries = 0;
     function tryResolve() {
-      ObjC.schedule(ObjC.mainQueue, function () {
+      ObjC.schedule(ObjC.mainQueue, () => {
         const window = UIWindow.keyWindow();
         const layout = new UINode(window);
         const node = layout.find(predicate);
