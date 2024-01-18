@@ -1,13 +1,12 @@
 import { UINode } from './lib/node.js';
 export { UINode } from './lib/node.js';
 
-const UIWindow = ObjC.classes.UIWindow;
-
 export function get(predicate) {
   return new Promise((resolve, reject) => {
     let tries = 0;
     function tryResolve() {
       ObjC.schedule(ObjC.mainQueue, () => {
+        const { UIWindow } = getApi();
         const window = UIWindow.keyWindow();
         const layout = new UINode(window);
         const node = layout.find(predicate);
@@ -29,3 +28,14 @@ export function get(predicate) {
   });
 }
 
+let _api = null;
+
+function getApi() {
+  if (_api === null) {
+    _api = {
+      UIWindow: ObjC.classes.UIWindow
+    };
+  }
+
+  return _api;
+}
