@@ -1,6 +1,7 @@
-const UINode = require('./lib/node');
+import { UINode } from './lib/node.js';
+export { UINode } from './lib/node.js';
 
-function get(predicate) {
+export function get(predicate) {
   return new Promise((resolve, reject) => {
     let tries = 0;
     function tryResolve() {
@@ -38,9 +39,3 @@ function getApi() {
 
   return _api;
 }
-
-module.exports = {
-  get: get,
-  UINode: UINode
-};
-
