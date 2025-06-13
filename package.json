@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nowsecure/frida-uikit/issues"
   },
-  "homepage": "https://github.com/nowsecure/frida-uikit#readme"
+  "homepage": "https://github.com/nowsecure/frida-uikit#readme",
+  "dependencies": {
+    "frida-objc-bridge": "^8.0.5"
+  }
 }
