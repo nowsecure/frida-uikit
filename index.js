@@ -1,3 +1,5 @@
+import ObjC from 'frida-objc-bridge';
+
 import { UINode } from './lib/node.js';
 export { UINode } from './lib/node.js';
 
