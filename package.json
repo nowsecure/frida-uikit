@@ -2,6 +2,9 @@
   "name": "frida-uikit",
   "version": "5.0.0",
   "description": "Inspect and manipulate UIKit-based GUIs through Frida",
+  "keywords": [
+    "frida-gum"
+  ],
   "main": "index.js",
   "type": "module",
   "files": [
