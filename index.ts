@@ -1,9 +1,9 @@
-import ObjC from 'frida-objc-bridge';
+import ObjC from "frida-objc-bridge";
 
-import { UINode } from './lib/node.js';
-export { UINode } from './lib/node.js';
+import { UINode } from "./lib/node.js";
+export { UINode } from "./lib/node.js";
 
-export function get(predicate) {
+export function get(predicate: (x: UINode) => boolean): Promise<UINode> {
   return new Promise((resolve, reject) => {
     let tries = 0;
     function tryResolve() {
@@ -22,7 +22,7 @@ export function get(predicate) {
         if (tries < 40) {
           setTimeout(tryResolve, 500);
         } else {
-          reject(new Error('Timed out'));
+          reject(new Error("Timed out"));
         }
       });
     }
@@ -30,7 +30,7 @@ export function get(predicate) {
   });
 }
 
-let _api = null;
+let _api: { UIWindow: ObjC.Object } | null = null;
 
 function getApi() {
   if (_api === null) {

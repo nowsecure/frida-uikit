@@ -1,4 +1,4 @@
-import ObjC from 'frida-objc-bridge';
+import ObjC from "frida-objc-bridge";
 
 const UITouchPhaseBegan = 0;
 const UITouchPhaseMoved = 1;
@@ -9,8 +9,9 @@ const UITouchPhaseCancelled = 4;
 const UITOUCH_FLAG_IS_FIRST_TOUCH_FOR_VIEW = 1;
 const UITOUCH_FLAG_IS_TAP = 2;
 
-const CGFloat = (Process.pointerSize === 4) ? 'float' : 'double';
-const CGPoint = [CGFloat, CGFloat];
+type CGFloatType = "float" | "double";
+const CGFloat = (Process.pointerSize === 4) ? "float" : "double";
+const CGPoint: [CGFloatType, CGFloatType] = [CGFloat, CGFloat];
 const CGSize = [CGFloat, CGFloat];
 
 const kIOHIDDigitizerEventRange = 0x00000001;
@@ -19,11 +20,11 @@ const kIOHIDDigitizerEventPosition = 0x00000004;
 
 const Injector = ObjC.registerClass({
   methods: {
-    '- init': function () {
+    "- init": function () {
       const self = this.super.init();
       const api = getApi();
       if (self !== null) {
-        const displayLink = api.CADisplayLink.displayLinkWithTarget_selector_(self, ObjC.selector('dispatchTouch:'));
+        const displayLink = api.CADisplayLink.displayLinkWithTarget_selector_(self, ObjC.selector("dispatchTouch:"));
         ObjC.bind(self, {
           displayLink: displayLink,
           window: null,
@@ -37,13 +38,13 @@ const Injector = ObjC.registerClass({
       }
       return self;
     },
-    '- dealloc': function () {
+    "- dealloc": function () {
       ObjC.unbind(this.self);
       this.super.dealloc();
     },
-    '- dispatchTouch:': {
-      retType: 'void',
-      argTypes: ['object'],
+    "- dispatchTouch:": {
+      retType: "void",
+      argTypes: ["object"],
       implementation: function (sender) {
         const priv = this.data;
 
@@ -68,18 +69,18 @@ const Injector = ObjC.registerClass({
           phase = UITouchPhaseBegan;
           touch.setPhase_(phase);
           touch.setWindow_(priv.window);
-          touch['- _setLocationInWindow:resetPrevious:'].call(touch, point, true);
+          touch["- _setLocationInWindow:resetPrevious:"].call(touch, point, true);
           touch.setView_(priv.window.hitTest_withEvent_(point, NULL));
           setIsFirstTouchForView(touch, true);
         } else {
           touch = priv.touch;
 
           if (isLastTouch) {
-            touch['- _setLocationInWindow:resetPrevious:'].call(touch, priv.previous, false);
+            touch["- _setLocationInWindow:resetPrevious:"].call(touch, priv.previous, false);
             phase = UITouchPhaseEnded;
             point = priv.previous;
           } else {
-            touch['- _setLocationInWindow:resetPrevious:'].call(touch, point, false);
+            touch["- _setLocationInWindow:resetPrevious:"].call(touch, point, false);
             phase = api.CGPointEqualToPoint(point, priv.previous) ? UITouchPhaseStationary : UITouchPhaseMoved;
           }
 
@@ -87,8 +88,8 @@ const Injector = ObjC.registerClass({
         }
 
         const app = api.UIApplication.sharedApplication();
-        const event = app['- _touchesEvent'].call(app);
-        event['- _clearTouches'].call(event);
+        const event = app["- _touchesEvent"].call(app);
+        event["- _clearTouches"].call(event);
 
         const absoluteTime = api.mach_absolute_time();
 
@@ -119,12 +120,12 @@ const Injector = ObjC.registerClass({
             isRangeAndTouch,
             0);
 
-        if ('- _setHidEvent:' in touch) {
-          touch['- _setHidEvent:'].call(touch, hidEvent);
+        if ("- _setHidEvent:" in touch) {
+          touch["- _setHidEvent:"].call(touch, hidEvent);
         }
 
-        event['- _setHIDEvent:'].call(event, hidEvent);
-        event['- _addTouch:forDelayedDelivery:'].call(event, touch, false);
+        event["- _setHIDEvent:"].call(event, hidEvent);
+        event["- _addTouch:forDelayedDelivery:"].call(event, touch, false);
 
         const pool = api.NSAutoreleasePool.alloc().init();
         try {
@@ -145,11 +146,11 @@ const Injector = ObjC.registerClass({
   }
 });
 
-export function tap(view, x, y) {
+export function tap(view: ObjC.Object, x: number, y: number): Promise<void> {
   return new Promise(function (resolve, reject) {
     const window = view.window();
     if (window === null) {
-      reject(new Error('Cannot tap on NULL window'));
+      reject(new Error("Cannot tap on NULL window"));
       return;
     }
     const { CGPointZero } = getApi();
@@ -166,36 +167,36 @@ export function tap(view, x, y) {
   });
 }
 
-function setIsTap (touch, isTap) {
-  const flags = touch.$ivars['_touchFlags'];
+function setIsTap (touch: ObjC.Object, isTap : boolean) {
+  const flags = touch.$ivars["_touchFlags"];
   const newFlags = [...flags];
   if (isTap) {
     newFlags[0] |= UITOUCH_FLAG_IS_TAP;
   } else {
     newFlags[0] &= ~UITOUCH_FLAG_IS_TAP;
   }
-  touch.$ivars['_touchFlags'] = newFlags;
+  touch.$ivars["_touchFlags"] = newFlags;
 }
 
-function setIsFirstTouchForView (touch, isFirst) {
-  const flags = touch.$ivars['_touchFlags'];
+function setIsFirstTouchForView (touch: ObjC.Object, isFirst: boolean) {
+  const flags = touch.$ivars["_touchFlags"];
   const newFlags = [...flags];
   if (isFirst) {
     newFlags[0] |= UITOUCH_FLAG_IS_FIRST_TOUCH_FOR_VIEW;
   } else {
     newFlags[0] &= ~UITOUCH_FLAG_IS_FIRST_TOUCH_FOR_VIEW;
   }
-  touch.$ivars['_touchFlags'] = newFlags;
+  touch.$ivars["_touchFlags"] = newFlags;
 }
 
-let _api = null;
+let _api: any = null;
 
 function getApi () {
   if (_api === null) {
-    const coreGraphics = Process.getModuleByName('CoreGraphics');
-    const coreFoundation = Process.getModuleByName('CoreFoundation');
-    const foundation = Process.getModuleByName('Foundation');
-    const libSystem = Process.getModuleByName('libSystem.B.dylib');
+    const coreGraphics = Process.getModuleByName("CoreGraphics");
+    const coreFoundation = Process.getModuleByName("CoreFoundation");
+    const foundation = Process.getModuleByName("Foundation");
+    const libSystem = Process.getModuleByName("libSystem.B.dylib");
 
     _api = {
       CADisplayLink: ObjC.classes.CADisplayLink,
@@ -204,45 +205,45 @@ function getApi () {
       UIApplication: ObjC.classes.UIApplication,
       UITouch: ObjC.classes.UITouch,
       CGPointEqualToPoint: new NativeFunction(
-          coreGraphics.getExportByName('CGPointEqualToPoint'),
-          'uint8',
+          coreGraphics.getExportByName("CGPointEqualToPoint"),
+          "uint8",
           [CGPoint, CGPoint]
       ),
-      CGPointZero: coreGraphics.getExportByName('CGPointZero').readPointer(),
+      CGPointZero: coreGraphics.getExportByName("CGPointZero").readPointer(),
       IOHIDEventCreateDigitizerFingerEvent: new NativeFunction(
-          Module.getGlobalExportByName('IOHIDEventCreateDigitizerFingerEvent'),
-          'pointer',
+          Module.getGlobalExportByName("IOHIDEventCreateDigitizerFingerEvent"),
+          "pointer",
           [
-              'pointer',            // allocator
-              ['uint32', 'uint32'], // timestamp
-              'uint32',             // index
-              'uint32',             // identity
-              'uint32',             // eventMask
+              "pointer",            // allocator
+              ["uint32", "uint32"], // timestamp
+              "uint32",             // index
+              "uint32",             // identity
+              "uint32",             // eventMask
               CGFloat,              // x
               CGFloat,              // y
               CGFloat,              // z
               CGFloat,              // tipPressure
               CGFloat,              // twist
-              'uint8',              // range
-              'uint8',              // touch
-              'uint32'              // options
+              "uint8",              // range
+              "uint8",              // touch
+              "uint32"              // options
           ]
       ),
-      kCFAllocatorDefault: coreFoundation.getExportByName('kCFAllocatorDefault').readPointer(),
-      NSRunLoopCommonModes: foundation.getExportByName('NSRunLoopCommonModes').readPointer(),
+      kCFAllocatorDefault: coreFoundation.getExportByName("kCFAllocatorDefault").readPointer(),
+      NSRunLoopCommonModes: foundation.getExportByName("NSRunLoopCommonModes").readPointer(),
       CFGetSystemUptime: new NativeFunction(
-          coreFoundation.getExportByName('CFGetSystemUptime'),
-          'double',
+          coreFoundation.getExportByName("CFGetSystemUptime"),
+          "double",
           []
       ),
       CFRelease: new NativeFunction(
-          coreFoundation.getExportByName('CFRelease'),
-          'void',
-          ['pointer']
+          coreFoundation.getExportByName("CFRelease"),
+          "void",
+          ["pointer"]
       ),
       mach_absolute_time: new NativeFunction(
-          libSystem.getExportByName('mach_absolute_time'),
-          'uint64',
+          libSystem.getExportByName("mach_absolute_time"),
+          "uint64",
           []
       ),
     };
