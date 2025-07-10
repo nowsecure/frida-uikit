@@ -5,12 +5,16 @@
   "keywords": [
     "frida-gum"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "type": "module",
+  "types": "dist/**/*.d.ts",
   "files": [
-    "/index.js",
-    "/lib/**/*.js"
+    "dist/index.js",
+    "dist/lib/**/*.js"
   ],
+  "scripts": {
+    "build": "tsc"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nowsecure/frida-uikit.git"
@@ -22,5 +26,10 @@
   "homepage": "https://github.com/nowsecure/frida-uikit#readme",
   "dependencies": {
     "frida-objc-bridge": "^8.0.5"
+  },
+  "devDependencies": {
+    "@types/frida-gum": "^19.0.0",
+    "@types/node": "^24.0.8",
+    "typescript": "^5.8.3"
   }
 }
